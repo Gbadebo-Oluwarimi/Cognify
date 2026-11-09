@@ -14,14 +14,10 @@ const gellix = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "WAEC Prep | Dashboard",
-  description: "Your personal WAEC preparation dashboard.",
+  title: "WAEC Prep | Learning Dashboard",
+  description: "A focused place to prepare for your WAEC examinations.",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return (
-    <html lang="en">
-      <body className={gellix.variable}>{children}</body>
-    </html>
-  );
+  return <html lang="en"><body className={gellix.variable}>{children}</body></html>;
 }
