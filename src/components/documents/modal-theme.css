@@ -1,0 +1,186 @@
+/* Shared Cognify dialog frame based on the practice test modal. */
+.study-modal-backdrop {
+  place-items: center;
+  padding: 22px;
+  background: rgba(0, 0, 0, .62);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+.study-modal,
+.create-study-modal,
+.add-note-modal,
+.replace-modal,
+.info-modal {
+  position: relative;
+  width: min(100%, 460px);
+  max-height: min(90dvh, 720px);
+  padding-top: 132px;
+  overflow: auto;
+  border: 1px solid #393939;
+  border-radius: 23px;
+  background: #202020 url("/images/practice-wheat-banner.jpg") top center / 100% 132px no-repeat;
+  box-shadow: 0 24px 70px #0007;
+}
+
+.study-modal::before,
+.create-study-modal::before,
+.add-note-modal::before,
+.replace-modal::before,
+.info-modal::before {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 132px;
+  content: "";
+  pointer-events: none;
+  border-radius: 22px 22px 0 0;
+  background: linear-gradient(180deg, transparent 65%, #202020 100%);
+}
+
+.study-modal-header {
+  position: relative;
+  z-index: 1;
+  align-items: flex-start;
+  min-height: 74px;
+  padding: 20px 52px 12px 25px;
+  border-bottom: 0;
+}
+
+.study-modal-header h2 {
+  font-size: 15px;
+}
+
+.study-modal-header p {
+  font-size: 11px;
+}
+
+.study-close {
+  position: absolute;
+  top: -120px;
+  right: 12px;
+  z-index: 2;
+  color: #fff;
+  border-color: #ffffff42;
+  border-radius: 50%;
+  background: #1119;
+}
+
+.study-close:hover {
+  background: #111d;
+}
+
+.study-modal-form,
+.add-note-form {
+  gap: 14px;
+  padding: 8px 25px 22px;
+}
+
+.study-modal-footer {
+  display: flex;
+  justify-content: stretch;
+  gap: 8px;
+  padding-top: 10px;
+}
+
+.study-modal-footer .study-primary,
+.study-modal-footer .study-secondary,
+.study-modal-footer .supplementary-button {
+  flex: 1;
+  min-width: 0;
+  min-height: 39px;
+  border-radius: 22px;
+}
+
+.study-modal-footer .study-secondary {
+  color: #aaa;
+  border-color: transparent;
+  background: #292929;
+}
+
+.study-modal-footer .study-secondary:hover {
+  background: #333;
+}
+
+.study-modal-footer .study-primary {
+  color: #171717;
+  border-color: transparent;
+  background: #e8e8e8;
+  font-weight: 600;
+}
+
+.study-modal-footer .study-primary:hover {
+  background: #fff;
+}
+
+.upload-modal {
+  width: min(100%, 460px);
+  max-height: min(90dvh, 720px);
+  padding: 132px 25px 22px;
+  border-radius: 23px;
+  background: #202020 url("/images/practice-wheat-banner.jpg") top center / 100% 132px no-repeat;
+  box-shadow: 0 24px 70px #0007;
+}
+
+.upload-modal-head {
+  min-height: 54px;
+  align-items: flex-start;
+}
+
+.upload-modal .modal-footer {
+  gap: 8px;
+}
+
+.upload-modal .modal-primary,
+.upload-modal .modal-secondary {
+  min-height: 39px;
+  border-radius: 22px;
+}
+
+@media (max-width: 680px) {
+  .study-modal-backdrop,
+  .modal-backdrop {
+    place-items: center;
+    padding: 14px;
+  }
+
+  .study-modal,
+  .create-study-modal,
+  .add-note-modal,
+  .replace-modal,
+  .info-modal,
+  .upload-modal,
+  .practice-modal {
+    width: min(100%, 460px);
+    max-height: min(90dvh, 720px);
+    border-radius: 23px;
+  }
+
+  .study-modal-header {
+    padding: 18px 48px 12px 18px;
+  }
+
+  .study-modal-form,
+  .add-note-form {
+    padding: 8px 18px calc(18px + env(safe-area-inset-bottom));
+  }
+
+  .study-modal-footer {
+    position: static;
+    padding: 8px 0 0;
+    background: transparent;
+  }
+
+  .study-modal-footer .study-primary,
+  .study-modal-footer .study-secondary,
+  .study-modal-footer .supplementary-button {
+    flex: 1;
+    min-width: 0;
+    white-space: normal;
+  }
+
+  .upload-modal {
+    padding: 132px 18px calc(18px + env(safe-area-inset-bottom));
+  }
+}
