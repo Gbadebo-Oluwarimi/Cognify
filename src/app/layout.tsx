@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import "katex/dist/katex.min.css";
 import "@/components/documents/documents.css";
+import "@/components/courses/course-learning.css";
 import "@/components/auth/auth.css";
 import "@/components/documents/modal-theme.css";
 

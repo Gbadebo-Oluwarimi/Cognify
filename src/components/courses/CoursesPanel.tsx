@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Archive, BookOpen, ChevronRight, Plus, X } from "lucide-react";
-import { CourseDocumentsPanel } from "@/components/documents/CourseDocumentsPanel";
+import { CourseLearningMaterialsPanel } from "@/components/courses/CourseLearningMaterialsPanel";
 
 export type Course = {
   id: string;
@@ -57,7 +57,7 @@ export function CoursesPanel({ courses, loading, error, onRefresh }: Props) {
   }
 
   if (selected && showDocuments) {
-    return <CourseDocumentsPanel course={selected} onBack={() => setShowDocuments(false)} />;
+    return <CourseLearningMaterialsPanel course={selected} onBack={() => setShowDocuments(false)} />;
   }
 
   return <div className="page-content">

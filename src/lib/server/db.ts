@@ -37,12 +37,23 @@ export async function ensureIndexes(): Promise<void> {
       db.collection("documents").createIndex({ studentId: 1, _id: 1 }, { name: "owned_documents" }),
       db.collection("ocrPages").createIndex({ documentId: 1, sourceFileId: 1, pageNumber: 1 }, { unique: true, name: "ocr_page_identity" }),
       db.collection("ocrPages").createIndex({ documentId: 1, pageNumber: 1 }, { name: "document_pages" }),
+      db.collection("ocrPages").createIndex({ uploadedDocumentId: 1, pageNumber: 1 }, { unique: true, partialFilterExpression: { uploadedDocumentId: { $exists: true } }, name: "uploaded_document_pages" }),
       db.collection("ocrPages").createIndex({ studentId: 1, courseId: 1, status: 1 }, { name: "student_ocr_status" }),
       db.collection("processingJobs").createIndex({ status: 1, createdAt: 1 }, { name: "queued_jobs" }),
       db.collection("processingJobs").createIndex({ leaseUntil: 1 }, { name: "job_lease" }),
       db.collection("processingJobs").createIndex({ documentId: 1, jobType: 1 }, { unique: true, name: "document_ocr_job" }),
       db.collection("pastQuestions").createIndex({ documentId: 1, sourceFileId: 1, sourcePageNumbers: 1, questionNumber: 1 }, { name: "question_source" }),
       db.collection("pastQuestions").createIndex({ studentId: 1, courseId: 1, extractionStatus: 1 }, { name: "student_questions" }),
+      db.collection("topics").createIndex({ studentId: 1, courseId: 1, name: 1 }, { unique: true, name: "course_topic_name" }),
+      db.collection("uploadSessions").createIndex({ studentId: 1, courseId: 1, createdAt: -1 }, { name: "course_upload_sessions" }),
+      db.collection("uploadSessions").createIndex({ courseId: 1, topicId: 1, createdAt: -1 }, { name: "topic_upload_sessions" }),
+      db.collection("uploadSessions").createIndex({ studentId: 1, idempotencyKey: 1 }, { unique: true, partialFilterExpression: { idempotencyKey: { $type: "string" } }, name: "student_upload_idempotency" }),
+      db.collection("uploadSessions").createIndex({ status: 1, nextAttemptAt: 1, createdAt: 1 }, { name: "openparser_poll_queue" }),
+      db.collection("uploadedDocuments").createIndex({ uploadSessionId: 1, fileIndex: 1 }, { unique: true, name: "uploaded_file_order" }),
+      db.collection("uploadedDocuments").createIndex({ studentId: 1, courseId: 1, topicId: 1, createdAt: -1 }, { name: "topic_uploaded_documents" }),
+      db.collection("ocrDocumentResults").createIndex({ uploadedDocumentId: 1 }, { unique: true, name: "document_ocr_result" }),
+      db.collection("ocrDocumentResults").createIndex({ studentId: 1, courseId: 1, topicId: 1, createdAt: -1 }, { name: "student_topic_ocr_results" }),
+      db.collection("ocrDocumentResults").createIndex({ sessionId: 1, studentId: 1 }, { name: "student_session_ocr_results" }),
     ]);
   })().catch(error => { indexesPromise = undefined; throw error; });
   return indexesPromise;
