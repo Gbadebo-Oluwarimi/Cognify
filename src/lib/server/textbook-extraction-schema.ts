@@ -105,7 +105,8 @@ export function pastQuestionExtractionSchema(sourceDocumentId: string) {
           properties: {
             number: { type: "string", description: "Question number as printed." },
             prompt: { type: "string", description: "Question stem, preserving source wording and writing formulas in renderable LaTeX delimiters $...$ or $$...$$ (or \\(...\\) and \\[...\\])." },
-            parts: { type: "array", items: part },
+
+            parts: { type: "array", items: part }, 
             options: { type: "array", items: { type: "object", additionalProperties: false, properties: { label: { type: "string" }, text: { type: "string" } }, required: ["label", "text"] } },
             marks: { type: ["string", "null"], description: "Total marks printed for the question, or null if absent." },
             source, needsReview: { type: "boolean" },
