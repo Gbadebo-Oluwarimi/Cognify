@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ArrowLeft, BookOpen, FileImage, FileText, LoaderCircle, Plus, RefreshCw } from "lucide-react";
 import type { Course } from "@/components/courses/CoursesPanel";
-import { MathMarkdown, OCRStructuredContent } from "@/components/courses/OCRStructuredContent";
+import { OCRResultDashboard } from "@/components/courses/OCRResultDashboard";
 
 type Topic = { id: string; name: string; description: string };
 type UploadedFile = { id: string; filename: string; fileIndex: number; mimeType: string; fileSize: number; status: string; errorMessage: string | null };
@@ -18,18 +18,6 @@ const sessionLimit = 50 * 1024 * 1024;
 const activeStatuses = new Set(["SUBMITTING", "SUBMITTED", "PROCESSING"]);
 const label = (value: string) => value.replaceAll("_", " ").toLowerCase().replace(/^\w/, char => char.toUpperCase());
 const requestKey = () => globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(16).slice(2)}`;
-
-function rawRows(value: unknown, path = "", output: Array<{ path: string; value: string }> = []) {
-  if (Array.isArray(value)) {
-    if (value.length === 0) output.push({ path: path || "[ ]", value: "[]" });
-    value.forEach((item, index) => rawRows(item, `${path}[${index}]`, output));
-  } else if (value && typeof value === "object") {
-    const entries = Object.entries(value);
-    if (entries.length === 0) output.push({ path: path || "{ }", value: "{}" });
-    entries.forEach(([key, item]) => rawRows(item, path ? `${path}.${key}` : key, output));
-  } else output.push({ path, value: value === null ? "null" : String(value) });
-  return output;
-}
 
 export function CourseLearningMaterialsPanel({ course, onBack }: { course: Course; onBack: () => void }) {
   const [data, setData] = useState<Payload>({ topics: [], sessions: [] });
@@ -159,6 +147,8 @@ export function CourseLearningMaterialsPanel({ course, onBack }: { course: Cours
 
   const sessionsForTopic = data.sessions.filter(session => !topicId || session.topicId === topicId);
 
+  if (detail) return <OCRResultDashboard key={detail.session.id} detail={detail} onBack={() => setDetail(null)} />;
+
   return <main className="page-content learning-materials-page">
     <button className="workspace-back" onClick={onBack}><ArrowLeft size={14}/>Back to courses</button>
     <div className="page-title"><div><h1>{course.title}</h1><p>{course.subject} · Extract and organize source content with OpenParser PaddleOCR-VL.</p></div></div>
@@ -187,14 +177,5 @@ export function CourseLearningMaterialsPanel({ course, onBack }: { course: Cours
       </>}
     </section>
 
-    {detail && <div className="study-modal-backdrop" onMouseDown={event => { if (event.target === event.currentTarget) setDetail(null); }}><section className="study-modal material-preview-modal" role="dialog" aria-modal="true" aria-labelledby="ocr-result-title"><header className="study-modal-header"><div><span className="study-modal-kicker">{detail.course.name} · {detail.topic.name} · {label(detail.session.category)}</span><h2 id="ocr-result-title">{detail.session.title}</h2><p>{label(detail.session.status)} · OpenParser PaddleOCR-VL · Source content extracted to MongoDB</p></div><button className="study-close" onClick={() => setDetail(null)} aria-label="Close OCR result">×</button></header><div className="material-preview-content">
-      <p className="ocr-retention-note">Cognify keeps OCR JSON and text projections. Original uploaded file bytes are not retained.</p>
-      {detail.documents.map(document => <article key={document.id} className="preview-section"><h3>{document.fileIndex + 1}. {document.filename}</h3><p>{label(document.status)} · {document.mimeType} · {document.result?.pageCount ?? 0} page(s)</p>{document.errorMessage && <p className="session-error">{document.errorMessage}</p>}{document.result && <>
-        {document.result.extractedData != null ? <section className="ocr-extracted-section"><div className="ocr-result-section-heading"><div><span className="section-eyebrow">SOURCE STRUCTURE</span><h4>{detail.session.category === "PAST_QUESTION" ? "Extracted questions" : detail.session.category === "SYLLABUS" ? "Extracted syllabus" : "Extracted learning material"}</h4></div><span className="ocr-original-label">Source extraction · no generated answers</span></div><OCRStructuredContent category={detail.session.category} data={document.result.extractedData}/></section> : <section className="ocr-extracted-section"><h4>OCR result</h4><MathMarkdown>{document.result.markdown || document.result.extractedText || "OpenParser did not return text or Markdown for this document."}</MathMarkdown></section>}
-        <details className="ocr-source-list"><summary>Full OCR transcription</summary><MathMarkdown>{document.result.markdown || document.result.extractedText || "No transcription text was returned."}</MathMarkdown></details>
-        {document.result.pages.map((page, index) => { const pageData = page.pageData ?? page; const pageRecord = pageData && typeof pageData === "object" ? pageData as Record<string, unknown> : {}; const pageElements = Array.isArray(pageRecord.elements) ? pageRecord.elements : []; const pageContent = typeof pageRecord.markdown === "string" ? pageRecord.markdown : typeof pageRecord.text === "string" ? pageRecord.text : pageElements.map((element: any) => element?.text).filter((text: unknown) => typeof text === "string").join("\n\n"); return <details className="ocr-source-list" key={page.pageNumber ?? page.number ?? index}><summary>Page {page.pageNumber ?? page.number ?? page.page_number ?? index + 1} OCR</summary>{pageContent ? <MathMarkdown>{pageContent}</MathMarkdown> : <pre className="ocr-readable-preview">{JSON.stringify(pageData, null, 2)}</pre>}</details>; })}
-        {document.result.rawResponse !== undefined && <details className="ocr-source-list"><summary>Raw OpenParser JSON (developer view)</summary><table className="ocr-raw-table"><thead><tr><th>Field path</th><th>Value</th></tr></thead><tbody>{rawRows(document.result.rawResponse).map((row, index) => <tr key={`${row.path}-${index}`}><td>{row.path}</td><td>{row.value}</td></tr>)}</tbody></table></details>}
-      </>}</article>)}
-    </div></section></div>}
   </main>;
 }

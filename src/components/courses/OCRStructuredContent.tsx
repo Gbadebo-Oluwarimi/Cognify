@@ -52,7 +52,7 @@ function ContentBlock({ value }: { value: unknown }) {
 
 function TextbookView({ data }: { data: JsonRecord }) {
   return <div className="ocr-structured-document">
-    {(data.title || data.subject) && <div className="ocr-document-heading"><h3>{string(data.title) || "Extracted material"}</h3>{data.subject && <p>{string(data.subject)}</p>}</div>}
+    {(string(data.title) || string(data.subject)) && <div className="ocr-document-heading"><h3>{string(data.title) || "Extracted material"}</h3>{string(data.subject) && <p>{string(data.subject)}</p>}</div>}
     {typeof data.introduction === "string" && data.introduction && <section className="ocr-introduction"><h4>Introduction</h4><MathMarkdown>{data.introduction}</MathMarkdown></section>}
     {list(data.sections).map((sectionValue, index) => {
       const section = record(sectionValue);
@@ -73,10 +73,10 @@ function PastQuestionView({ data }: { data: JsonRecord }) {
       const question = record(value);
       return <article className="ocr-question-card" key={`${string(question.number)}-${index}`}>
         <header><h4>Question {string(question.number) || index + 1}</h4><div><SourceLine source={question.source}/><ReviewFlag value={question.needsReview}/></div></header>
-        {question.prompt && <MathMarkdown className="ocr-question-prompt">{string(question.prompt)}</MathMarkdown>}
-        {list(question.parts).map((partValue, partIndex) => { const part = record(partValue); return <div className="ocr-question-part" key={partIndex}><div className="ocr-question-part-title"><b>{string(part.label) || `Part ${partIndex + 1}`}</b>{part.marks && <span>{string(part.marks)} marks</span>}</div><MathMarkdown>{string(part.prompt)}</MathMarkdown><footer><SourceLine source={part.source}/><ReviewFlag value={part.needsReview}/></footer></div>; })}
+        {string(question.prompt) && <MathMarkdown className="ocr-question-prompt">{string(question.prompt)}</MathMarkdown>}
+        {list(question.parts).map((partValue, partIndex) => { const part = record(partValue); return <div className="ocr-question-part" key={partIndex}><div className="ocr-question-part-title"><b>{string(part.label) || `Part ${partIndex + 1}`}</b>{string(part.marks) && <span>{string(part.marks)} marks</span>}</div><MathMarkdown>{string(part.prompt)}</MathMarkdown><footer><SourceLine source={part.source}/><ReviewFlag value={part.needsReview}/></footer></div>; })}
         {list(question.options).length > 0 && <ol className="ocr-answer-options" type="A">{list(question.options).map((optionValue, optionIndex) => { const option = record(optionValue); return <li key={optionIndex}><b>{string(option.label)}</b><MathMarkdown>{string(option.text)}</MathMarkdown></li>; })}</ol>}
-        {question.marks && <span className="ocr-marks">{string(question.marks)} marks</span>}
+        {string(question.marks) && <span className="ocr-marks">{string(question.marks)} marks</span>}
       </article>;
     })}
     {questions.length === 0 && <EmptyExtraction message="No question blocks were confidently extracted. Check the full OCR text below."/>}
